@@ -1,0 +1,34 @@
+{
+  "name": "redux-react-integration",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/suxxuscomp/integration-redux-reactjs"
+  },
+  "author": "suxxus",
+  "license": "ISC",
+  "description": "Redux studies bind redux react",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint --color  src || true",
+    "dev": "watch -p 'src/**/*.js' -c 'npm run lint'",
+    "check": "npm outdated --depth=0",
+    "update": "updtr"
+  },
+  "devDependencies": {
+    "eslint": "2.11.1",
+    "eslint-cli": "1.1.0",
+    "eslint-config-eslint": "3.0.0",
+    "updtr": "0.1.15",
+    "watch-cli": "0.2.1"
+  },
+  "keywords": [
+    "node",
+    "redux",
+    "react",
+    "integration"
+  ],
+  "dependencies": {
+    "redux": "3.5.2"
+  }
+}
