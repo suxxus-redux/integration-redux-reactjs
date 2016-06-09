@@ -1,6 +1,7 @@
 'use strict';
 
 (function(win) {
+
     var redux = win.Redux,
         reactRedux = win.ReactRedux,
         react = win.React,
@@ -8,9 +9,11 @@
         Provider = reactRedux.Provider,
         createStore = redux.createStore,
         connect = reactRedux.connect,
+        combineReducers = redux.combineReducers,
         bindActionCreators = redux.bindActionCreators;
 
     // -- react comps
+
     var greet = function(React) {
         return function(value) {
             return (React.createElement(
@@ -32,6 +35,7 @@
     var greetContainer = function(React) {
 
         return function(props) {
+
             var createGreet = greet(React);
 
             var name = props && props.name ?
@@ -75,25 +79,31 @@
     };
 
     // -- redux
-    var SET_NAME = 'set.name';
-    var initialState = { name: 'John' };
+
+    var USER_NAME = 'user.name';
+    var PHRASE = 'selected.phrase';
+    var initialState = { user: '', phrase: '' };
 
     var actionCreators = {
-        user: function(name) {
+        user: function(value) {
             return {
-                type: SET_NAME,
-                name: name
+                type: USER_NAME,
+                name: value
+            };
+        },
+        phrase: function(value) {
+            return {
+                type: PHRASE,
+                phrase: value
             };
         }
     };
 
-    var reducer = function(state, action) {
-
+    var reducerUser = function(state, action) {
+        state = state || '';
         var actions = {};
-        actions[SET_NAME] = function() {
-            return {
-                name: action.name
-            };
+        actions[USER_NAME] = function() {
+            return action.name
         };
         actions.default = function() {
             return state;
@@ -103,14 +113,46 @@
         return reduce();
     };
 
-    var store = createStore(reducer, initialState);
+    var reducerPhrase = function(state, action) {
+        state = state || '';
+        var actions = {};
+        actions[PHRASE] = function() {
+            return action.phrase;
+        };
+        actions.default = function() {
+            return state;
+        };
+
+        var reduce = actions[action.type] || actions.default;
+        return reduce();
+    };
+
+    var rootReducer = function() {
+        return combineReducers({
+            user: reducerUser,
+            phrase: reducerPhrase
+        });
+    };
+
+    var store = createStore(rootReducer(), initialState);
+
+    console.log('state should be {user:\'\', phrase: \'\'}: ', (store.getState().user === '' && store.getState().phrase === ''));
+
+    store.dispatch (actionCreators.user('John'));
+
+    console.log('state should be {user:\'John\', phrase: \'\'}: ', (store.getState().user === 'John' && store.getState().phrase === ''));
+
+    store.dispatch (actionCreators.phrase('Have a nice day'));
+
+    console.log('state should be {user:\'John\', phrase: \'Have a nice day\'}: ', (store.getState().user === 'John' && store.getState().phrase === 'Have a nice day'));
 
 
-/*    // -- render to DOM
-    var props = { name: 'John', quotes: ['have a nice day', 'today will be a great day'] };
-    var App = app(React);
+    // -----------------------------------------------
+    /*    // -- render to DOM
+        var props = { name: 'John', quotes: ['have a nice day', 'today will be a great day'] };
+        var App = app(React);
 
-    render(App(props),
-        document.querySelector('#root'));
-*/
+        render(App(props),
+            document.querySelector('#root'));
+    */
 }(window));
