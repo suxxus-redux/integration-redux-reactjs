@@ -10,7 +10,6 @@
         connect = reactRedux.connect,
         bindActionCreators = redux.bindActionCreators;
 
-
     // -- react comps
     var greet = function(React) {
         return function(value) {
@@ -75,11 +74,43 @@
         };
     };
 
-    // -- render to DOM
+    // -- redux
+    var SET_NAME = 'set.name';
+    var initialState = { name: 'John' };
+
+    var actionCreators = {
+        user: function(name) {
+            return {
+                type: SET_NAME,
+                name: name
+            };
+        }
+    };
+
+    var reducer = function(state, action) {
+
+        var actions = {};
+        actions[SET_NAME] = function() {
+            return {
+                name: action.name
+            };
+        };
+        actions.default = function() {
+            return state;
+        };
+
+        var reduce = actions[action.type] || actions.default;
+        return reduce();
+    };
+
+    var store = createStore(reducer, initialState);
+
+
+/*    // -- render to DOM
     var props = { name: 'John', quotes: ['have a nice day', 'today will be a great day'] };
     var App = app(React);
 
     render(App(props),
         document.querySelector('#root'));
-
+*/
 }(window));
