@@ -147,12 +147,11 @@
     render(provider,
         win.document.querySelector('#root'));
 
-    console.log(store.getState());
 
     // -- dispatch actions
     win.setTimeout(function() {
         store.dispatch(actionCreators.user('Alice'));
-        store.dispatch(actionCreators.phrase(['Is your day']));
+        store.dispatch(actionCreators.phrase(['Is your day', 'You are nice']));
     }, 2000);
 
 }(window));
