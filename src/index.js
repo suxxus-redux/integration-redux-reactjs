@@ -9,80 +9,69 @@
         Provider = reactRedux.Provider,
         createStore = redux.createStore,
         connect = reactRedux.connect,
-        combineReducers = redux.combineReducers,
-        bindActionCreators = redux.bindActionCreators;
+        combineReducers = redux.combineReducers;
 
-    // -- react comps
-
+    // -- react
     var greet = function(React) {
         return function(value) {
             return (React.createElement(
                 'p', {},
-                value
+                value.greet
             ));
-        }
+        };
     };
 
     var somethingNice = function(React) {
         return function(value) {
             return (React.createElement(
                 'em', {},
-                value
+                value.phrase
             ));
-        }
+        };
     };
 
     var greetContainer = function(React) {
-
-        return function(props) {
-
-            var createGreet = greet(React);
-
-            var name = props && props.name ?
-                props.name :
-                'name should be defined';
-
-            var sayHello = 'Hello ' + name;
-            var Greet = createGreet(sayHello);
-            return Greet;
+        var createGreet = greet(React);
+        var mapStateToProps = function(state) {
+            return { greet: 'Hello ' + state.user };
         };
+        return connect(mapStateToProps)(createGreet);
     };
 
     var somethingNiceContainer = function(React) {
 
-        return function(props) {
+        var createSomethingNice = somethingNice(React);
 
-            var createSomethingNice = somethingNice(React);
-            var quotes = props && props.quotes ?
-                props.quotes : [];
-            var ranNum = Math.floor(Math.random() * (quotes.length))
-            var quote = quotes[ranNum];
+        var getFrase = function(phrases) {
+            phrases = phrases || [];
+            var ranNum = Math.floor(Math.random() * (phrases.length));
+            return phrases[ranNum];
+        };
 
-            var SomethingNice = createSomethingNice(quote);
+        var mapStateToProps = function(state) {
+            return {
+                phrase: getFrase(state.phrases)
+            };
+        };
 
-            return SomethingNice;
-        }
+        return connect(mapStateToProps)(createSomethingNice);
     };
 
     var app = function(React) {
-
-        return function(props) {
-
-            var Greet = greetContainer(React)(props);
-            var SomethingNice = somethingNiceContainer(React)(props);
-
-            return React.createElement('div', {},
-                Greet,
-                SomethingNice
+        return function() {
+            var Greet = greetContainer(React);
+            var SomethingNice = somethingNiceContainer(React);
+            return React.createElement('div', null,
+                React.createElement(Greet, null),
+                React.createElement(SomethingNice, null)
             );
         };
     };
 
     // -- redux
-
     var USER_NAME = 'user.name';
-    var PHRASE = 'selected.phrase';
-    var initialState = { user: '', phrase: '' };
+    var PHRASE = 'selected.phrases';
+    var initialState = { user: '', phrases: '' };
 
     var actionCreators = {
         user: function(value) {
@@ -94,7 +83,7 @@
         phrase: function(value) {
             return {
                 type: PHRASE,
-                phrase: value
+                phrases: value
             };
         }
     };
@@ -103,7 +92,7 @@
         state = state || '';
         var actions = {};
         actions[USER_NAME] = function() {
-            return action.name
+            return action.name;
         };
         actions.default = function() {
             return state;
@@ -117,7 +106,7 @@
         state = state || '';
         var actions = {};
         actions[PHRASE] = function() {
-            return action.phrase;
+            return action.phrases;
         };
         actions.default = function() {
             return state;
@@ -130,7 +119,7 @@
     var rootReducer = function() {
         return combineReducers({
             user: reducerUser,
-            phrase: reducerPhrase
+            phrases: reducerPhrase
         });
     };
 
@@ -138,21 +127,32 @@
 
     console.log('state should be {user:\'\', phrase: \'\'}: ', (store.getState().user === '' && store.getState().phrase === ''));
 
-    store.dispatch (actionCreators.user('John'));
-
+    store.dispatch(actionCreators.user('John'));
     console.log('state should be {user:\'John\', phrase: \'\'}: ', (store.getState().user === 'John' && store.getState().phrase === ''));
 
-    store.dispatch (actionCreators.phrase('Have a nice day'));
+    store.dispatch(actionCreators.phrase(['Have a nice day', 'Today will be a great day']));
+    console.log('state should be {user:\'John\', phrases: [\'Have a nice day\', \'Today will be a great day\']}: ', (store.getState().user === 'John' && store.getState().phrases.length === 2));
 
-    console.log('state should be {user:\'John\', phrase: \'Have a nice day\'}: ', (store.getState().user === 'John' && store.getState().phrase === 'Have a nice day'));
+    // -- provider
+    var createProvider = function(React) {
+        return function(provider, st, children) {
+            return React.createElement(provider, { store: st }, React.createElement(children, null));
+        };
+    };
 
+    // -- render
+    var App = app(react);
+    var provider = createProvider(react)(Provider, store, App);
 
-    // -----------------------------------------------
-    /*    // -- render to DOM
-        var props = { name: 'John', quotes: ['have a nice day', 'today will be a great day'] };
-        var App = app(React);
+    render(provider,
+        win.document.querySelector('#root'));
 
-        render(App(props),
-            document.querySelector('#root'));
-    */
+    console.log(store.getState());
+
+    // -- dispatch actions
+    win.setTimeout(function() {
+        store.dispatch(actionCreators.user('Alice'));
+        store.dispatch(actionCreators.phrase(['Is your day']));
+    }, 2000);
+
 }(window));
