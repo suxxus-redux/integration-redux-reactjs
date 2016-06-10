@@ -10,9 +10,7 @@ cd ./integration-redux-reactjs
 npm install
 ```
 ## Usage
-cd ./src/scripts
-
-**node index.js**
+**./integration-redux-reactjs/src/index.html**
 
 ## Tips
 ```
