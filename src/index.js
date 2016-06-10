@@ -42,7 +42,7 @@
 
         var createSomethingNice = somethingNice(React);
 
-        var getFrase = function(phrases) {
+        var getPhrase = function(phrases) {
             phrases = phrases || [];
             var ranNum = Math.floor(Math.random() * (phrases.length));
             return phrases[ranNum];
@@ -50,7 +50,7 @@
 
         var mapStateToProps = function(state) {
             return {
-                phrase: getFrase(state.phrases)
+                phrase: getPhrase(state.phrases)
             };
         };
 
