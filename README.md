@@ -33,6 +33,10 @@ npm install
 ```
 * Connects a React component to a Redux store.
 * Returns a new, connected component class.
+* 
+
+## demo
+[go](http://suxxus.github.io/studies/redux-react-integration.html)
 
 ## Links
 [react-redux Api](https://github.com/reactjs/react-redux/blob/master/docs/api.md#api)
