@@ -10,9 +10,7 @@ cd ./integration-redux-reactjs
 npm install
 ```
 ## Usage
-cd ./src/scripts
-
-**node index.js**
+**./integration-redux-reactjs/src/index.html**
 
 ## Tips
 ```
@@ -35,6 +33,8 @@ cd ./src/scripts
 ```
 * Connects a React component to a Redux store.
 * Returns a new, connected component class.
+
+## [Demo](http://suxxus.github.io/studies/redux-react-integration.html)
 
 ## Links
 [react-redux Api](https://github.com/reactjs/react-redux/blob/master/docs/api.md#api)
