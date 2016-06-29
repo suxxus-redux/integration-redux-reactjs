@@ -50,7 +50,7 @@
         var mapStateToProps = function(state) {
             return { greet: 'Hello ' + state.user };
         };
-        return connect(mapStateToProps)(createGreet);
+        return connect(mapStateToProps, null, null, { pure: true })(createGreet);
     };
 
     var somethingNiceContainer = function(React) {
@@ -63,6 +63,7 @@
             return phrases[ranNum];
         };
 
+
         var mapStateToProps = function(state) {
             return {
                 phrase: getPhrase(state.phrases),
@@ -70,7 +71,7 @@
             };
         };
 
-        return connect(mapStateToProps)(createSomethingNice);
+        return connect(mapStateToProps, null, null, { pure: true })(createSomethingNice);
     };
 
     var changePhraseContainer = function(React) {
@@ -97,7 +98,7 @@
             };
         };
 
-        return connect(mapStateToProps, mapDispatchToProps)(createChangePhrase);
+        return connect(mapStateToProps, mapDispatchToProps, null, { pure: true })(createChangePhrase);
     };
 
     var app = function(React) {
