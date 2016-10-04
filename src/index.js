@@ -10,46 +10,71 @@
         combineReducers = redux.combineReducers;
 
 
-    // -- react components
+
+    // -- react STATELESS UI components
     var greet = function(React) {
-        return function(props) {
+
+        var tmp = function(props) {
             return (React.createElement(
                 'h1', null,
                 props.greet
             ));
         };
+
+        tmp.propTypes = {
+            greet: React.PropTypes.string.isRequired
+        };
+
+        return tmp;
     };
 
     var phrase = function(React) {
-        return function(props) {
+
+        var tmp = function(props) {
             return (React.createElement(
-                'div', { style: props.styles },
+                'div', {
+                    style: props.styles
+                },
                 props.phrase
             ));
         };
+
+        tmp.propTypes = {
+            styles: React.PropTypes.object.isRequired,
+            phrase: React.PropTypes.string
+        };
+
+        return tmp;
     };
 
     var change = function(React) {
-        return function(props) {
+
+        var tmp = function(props) {
             return (React.createElement(
                 'button', {
-                    onClick: function(e) {
-                        e.preventDefault();
-                        props.onClick(props.phrases);
-                    }
+                    onClick: props.onClick
                 },
-                'change'
+                'change phrase'
             ));
         };
+
+        tmp.propTypes = {
+            onClick: React.PropTypes.func.isRequired
+        };
+
+        return tmp;
     };
 
-    // -- react containers
+    // -- react components containers
     var greetContainer = function(React) {
+
         var createGreet = greet(React);
+
         var mapStateToProps = function(state) {
             return { greet: state.greet + ' ' + state.user };
         };
-        return connect(mapStateToProps, null, null, { pure: true })(createGreet);
+
+        return connect(mapStateToProps)(createGreet);
     };
 
     var phraseContainer = function(React) {
@@ -58,46 +83,41 @@
 
         var mapStateToProps = function(state) {
             return {
-                phrase: state.phrase,
+                phrase: state.phrases.phrase,
                 styles: { color: state.colors[Math.floor(Math.random() * (state.colors.length))] }
             };
         };
 
-        return connect(mapStateToProps, null, null, { pure: true })(createPhrase);
+        return connect(mapStateToProps)(createPhrase);
     };
 
     var changePhraseContainer = function(React) {
 
         var createChange = change(React);
 
-        var mapStateToProps = function(state) {
-            return {
-                phrases: state.phrases
-            };
-        };
-
         var mapDispatchToProps = function(dispatch) {
 
             return {
-                onClick: function(phrases) {
-                    phrases = phrases || [];
+                onClick: function(e) {
+                    e.preventDefault;
                     dispatch({
-                        type: 'change.phrase',
-                        payload: phrases[Math.floor(Math.random() * (phrases.length))]
+                        type: 'change.phrase'
                     });
                 }
             };
         };
 
-        return connect(mapStateToProps, mapDispatchToProps, null, { pure: true })(createChange);
+        return connect(null, mapDispatchToProps, null, { pure: true })(createChange);
     };
 
-
+    // -- all App components
     var app = function(React) {
         return function() {
+
             var Greet = greetContainer(React);
             var Phrase = phraseContainer(React);
             var ChangePhrase = changePhraseContainer(React);
+
             return React.createElement('div', null,
                 React.createElement(Greet, null),
                 React.createElement(Phrase, null),
@@ -106,27 +126,22 @@
         };
     };
 
+    // -- ===========
     // -- REDUX
+    // -- ===========
 
     // -- constants
     var GREET = 'greet.user';
     var USER_NAME = 'user.name';
-    var PHRASE = 'change.phrase';
-    var PHRASES = 'add.phrases';
+    var CHANGE_PHRASE = 'change.phrase';
+    var ADD_PHRASES = 'add.phrases';
     var COLORS = 'style.colors';
 
     var initialState = {
         greet: '',
         user: '',
-        phrase: '',
-        phrases: [
-            'Beauty is an enormous, unmerited gift given randomly, stupidly',
-            'What are men to rocks and mountains?',
-            'Sometimes I can feel my bones straining under the weight of all the lives I’m not living.',
-            'The curves of your lips rewrite history.',
-            'A dream, all a dream, that ends in nothing, and leaves the sleeper where he lay down, but I wish you to know that you inspired it'
-        ],
-        colors: ['darkolivegreen', 'cornflowerblue', 'cadetblue', 'darkmagenta']
+        phrases: {},
+        colors: ''
     };
 
     var actionCreators = {
@@ -143,9 +158,15 @@
                 payload: value
             };
         },
-        phrase: function(value) {
+        addPhrases: function(value) {
             return {
-                type: PHRASE,
+                type: ADD_PHRASES,
+                payload: value
+            };
+        },
+        addColors: function(value) {
+            return {
+                type: COLORS,
                 payload: value
             };
         }
@@ -156,94 +177,59 @@
 
         state = state || '';
 
-        var actions = {};
-
-        actions[USER_NAME] = function() {
+        if (action.type === USER_NAME) {
             return action.payload;
-        };
+        }
 
-        actions.default = function() {
-            return state;
-        };
-
-        var reduce = actions[action.type] || actions.default;
-        return reduce();
-    };
-
-    var reducerPhrase = function(state, action) {
-
-        state = state || '';
-
-        var actions = {};
-
-        actions[PHRASE] = function() {
-            return action.payload;
-        };
-        actions.default = function() {
-            return state;
-        };
-
-        var reduce = actions[action.type] || actions.default;
-        return reduce();
+        return state;
     };
 
     var reducerGreet = function(state, action) {
 
         state = state || '';
 
-        var actions = {};
-
-        actions[GREET] = function() {
+        if (action.type === GREET) {
             return action.payload;
-        };
-        actions.default = function() {
-            return state;
-        };
+        }
 
-        var reduce = actions[action.type] || actions.default;
-        return reduce();
+        return state;
     };
 
     var reducerPhrases = function(state, action) {
 
         state = state || '';
 
-        var actions = {};
+        if (action.type === ADD_PHRASES) {
+            return {
+                list: action.payload,
+                phrase: ''
+            }
+        }
 
-        actions[PHRASES] = function() {
-            return action.payload;
-        };
+        if (action.type === CHANGE_PHRASE) {
+            return {
+                list: state.list,
+                phrase: state.list[Math.floor(Math.random() * (state.list.length))]
+            };
+        }
 
-        actions.default = function() {
-            return state;
-        };
-
-        var reduce = actions[action.type] || actions.default;
-        return reduce();
+        return state;
     };
 
     var reducerColors = function(state, action) {
 
         state = state || '';
 
-        var actions = {};
-
-        actions[COLORS] = function() {
+        if (action.type === COLORS) {
             return action.payload;
-        };
+        }
 
-        actions.default = function() {
-            return state;
-        };
-
-        var reduce = actions[action.type] || actions.default;
-        return reduce();
+        return state;
     };
 
     var rootReducer = function() {
         return combineReducers({
             user: reducerUser,
-            phrase: reducerPhrase,
             greet: reducerGreet,
             phrases: reducerPhrases,
             colors: reducerColors
@@ -255,8 +241,8 @@
 
     // -- provider
     var createProvider = function(React) {
-        return function(provider, st, children) {
-            return React.createElement(provider, { store: st }, React.createElement(children, null));
+        return function(provider, st, application) {
+            return React.createElement(provider, { store: st }, React.createElement(application, null));
         };
     };
 
@@ -268,6 +254,14 @@
         win.document.querySelector('#root'));
 
     // -- dispatch actions
+    store.dispatch(actionCreators.addColors(['darkolivegreen', 'cornflowerblue', 'cadetblue', 'darkmagenta']));
+    store.dispatch(actionCreators.addPhrases([
+        'Beauty is an enormous, unmerited gift given randomly, stupidly',
+        'What are men to rocks and mountains?',
+        'Sometimes I can feel my bones straining under the weight of all the lives I’m not living.',
+        'The curves of your lips rewrite history.',
+        'A dream, all a dream, that ends in nothing, and leaves the sleeper where he lay down, but I wish you to know that you inspired it'
+    ]));
     store.dispatch(actionCreators.greet('Hello'));
     store.dispatch(actionCreators.user('Alice'));
 
