@@ -83,7 +83,7 @@
 
         var mapStateToProps = function(state) {
             return {
-                phrase: state.phrases.phrase,
+                phrase: state.phrases[Math.floor(Math.random() * (state.phrases.length))],
                 styles: { color: state.colors[Math.floor(Math.random() * (state.colors.length))] }
             };
         };
@@ -140,7 +140,8 @@
     var initialState = {
         greet: '',
         user: '',
-        phrases: {},
+        phrases: [],
+        changePhrase: '',
         colors: ''
     };
 
@@ -200,17 +201,7 @@
         state = state || '';
 
         if (action.type === ADD_PHRASES) {
-            return {
-                list: action.payload,
-                phrase: ''
-            }
-        }
-
-        if (action.type === CHANGE_PHRASE) {
-            return {
-                list: state.list,
-                phrase: state.list[Math.floor(Math.random() * (state.list.length))]
-            };
+            return action.payload
         }
 
         return state;
@@ -227,10 +218,21 @@
         return state;
     };
 
+    var reducerChangePhrase = function(state, action) {
+        state = state || false;
+
+        if (action.type === CHANGE_PHRASE) {
+            return !state;
+        }
+
+        return state;
+    };
+
     var rootReducer = function() {
         return combineReducers({
             user: reducerUser,
             greet: reducerGreet,
+            changePhrase: reducerChangePhrase,
             phrases: reducerPhrases,
             colors: reducerColors
         });
