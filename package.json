@@ -16,10 +16,10 @@
     "update": "updtr"
   },
   "devDependencies": {
-    "eslint": "2.11.1",
+    "eslint": "3.7.1",
     "eslint-cli": "1.1.0",
     "eslint-config-eslint": "3.0.0",
-    "updtr": "0.1.15",
+    "updtr": "0.2.1",
     "watch-cli": "0.2.1"
   },
   "keywords": [
@@ -29,9 +29,9 @@
     "integration"
   ],
   "dependencies": {
-    "react": "15.1.0",
-    "react-dom": "15.1.0",
+    "react": "15.3.2",
+    "react-dom": "15.3.2",
     "react-redux": "4.4.5",
-    "redux": "3.5.2"
+    "redux": "3.6.0"
   }
 }
