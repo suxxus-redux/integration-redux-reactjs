@@ -10,6 +10,13 @@
         combineReducers = redux.combineReducers;
 
 
+    // -- constants
+    var GREET = 'greet.user';
+    var USER_NAME = 'user.name';
+    var CHANGE_PHRASE = 'change.phrase';
+    var ADD_PHRASES = 'add.phrases';
+    var COLORS = 'style.colors';
+
 
     // -- react STATELESS UI components
     var greet = function(React) {
@@ -99,9 +106,9 @@
 
             return {
                 onClick: function(e) {
-                    e.preventDefault;
+                    e.preventDefault();
                     dispatch({
-                        type: 'change.phrase'
+                        type: CHANGE_PHRASE
                     });
                 }
             };
@@ -130,12 +137,6 @@
     // -- REDUX
     // -- ===========
 
-    // -- constants
-    var GREET = 'greet.user';
-    var USER_NAME = 'user.name';
-    var CHANGE_PHRASE = 'change.phrase';
-    var ADD_PHRASES = 'add.phrases';
-    var COLORS = 'style.colors';
 
     var initialState = {
         greet: '',
@@ -174,58 +175,63 @@
     };
 
     // -- reducers
+    // If the state passed to the reducer is undefined,
+    // you must explicitly return the initial state.
+    // The initial state may not be undefined
+
     var reducerUser = function(state, action) {
 
-        state = state || '';
+        var auxState = state || '';
 
         if (action.type === USER_NAME) {
             return action.payload;
         }
 
-        return state;
+        return auxState;
     };
 
     var reducerGreet = function(state, action) {
 
-        state = state || '';
+        var auxState = state || '';
 
         if (action.type === GREET) {
             return action.payload;
         }
 
-        return state;
+        return auxState;
     };
 
     var reducerPhrases = function(state, action) {
 
-        state = state || '';
+        var auxState = state || '';
 
         if (action.type === ADD_PHRASES) {
-            return action.payload
+            return action.payload;
         }
 
-        return state;
+        return auxState;
     };
 
     var reducerColors = function(state, action) {
 
-        state = state || '';
+        var auxState = state || '';
 
         if (action.type === COLORS) {
             return action.payload;
         }
 
-        return state;
+        return auxState;
     };
 
     var reducerChangePhrase = function(state, action) {
-        state = state || false;
+
+        var auxState = state || false;
 
         if (action.type === CHANGE_PHRASE) {
-            return !state;
+            return !auxState;
         }
 
-        return state;
+        return auxState;
     };
 
     var rootReducer = function() {
